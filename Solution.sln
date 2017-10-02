@@ -1,22 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicX", "BasicX\BasicX.vcxproj", "{E745E25C-0143-42AC-A486-1395A4C972AE}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VariableApplication", "VariableApplication\VariableApplication.vcxproj", "{D96B0ECC-60B7-44C9-9E0F-243F30CB091C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW_Demo", "GLFW_Demo\GLFW_Demo.vcxproj", "{49647803-64C5-4742-BCB2-C8DC671B25EF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW_Application", "GLFW_Application\GLFW_Application.vcxproj", "{837A57D3-2A9F-4985-B2EA-E18558EEAA43}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DEMOS_GLFW", "DEMOS_GLFW", "{4A7E7A0E-D5B3-4ABB-B638-6C80B321E5DE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Toolkit", "Toolkit", "{E081873A-3420-4007-A9C3-A7919945C153}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DEMOS", "DEMOS", "{75A6D539-8458-45DF-BE47-1376FB54C16E}"
 EndProject
@@ -41,48 +34,24 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Class", "Class", "{E0A09DA7-AF20-49C2-84DC-481ADDD01DCA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12_MeshClass", "12_MeshClass\12_MeshClass.vcxproj", "{C76AC833-06E7-4E6A-A097-83568F4930BE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_Minimal", "11_Minimal\11_Minimal.vcxproj", "{CEBD13BA-58AB-4983-8281-2FD4A23876F5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assignments", "Assignments", "{5D1FB011-A2D8-4107-890B-BF1ACD0C0994}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13_Translation and Scale", "13_Translation and Scale\13_Translation and Scale.vcxproj", "{F8D2226D-0FEB-4B92-9F76-59DBB6936F5C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14_LERP", "14_LERP\14_LERP.vcxproj", "{0F3ED9B5-5767-4A16-A2B7-AA328F911889}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exercises", "Exercises", "{13CD5CAF-2378-4851-9BEB-DF01D5A85C42}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E05 - LERP", "E05 - LERP\E05 - LERP.vcxproj", "{822E40D2-80A1-46EB-AD93-EC28C4F145ED}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_Rotations", "15_Rotations\15_Rotations.vcxproj", "{8C11DBDA-D14E-43F4-8F33-C2206969681C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A02 - 3D Primitives", "A02 - 3D Primitives\A02 - 3D Primitives.vcxproj", "{7EDBEED8-75ED-48EE-9F13-5D4A895E8F1B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A03 - LERP", "A03 - LERP\A03 - LERP.vcxproj", "{63E8C63D-1CCD-43F2-9E0F-1510677DE856}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E745E25C-0143-42AC-A486-1395A4C972AE}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16_Quaternions", "16_Quaternions\16_Quaternions.vcxproj", "{1F43F357-3BBA-4A90-ABCC-A13ABFAE85B0}"
 EndProject
@@ -128,10 +97,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E745E25C-0143-42AC-A486-1395A4C972AE}.Debug|x86.ActiveCfg = Debug|Win32
-		{E745E25C-0143-42AC-A486-1395A4C972AE}.Debug|x86.Build.0 = Debug|Win32
-		{E745E25C-0143-42AC-A486-1395A4C972AE}.Release|x86.ActiveCfg = Release|Win32
-		{E745E25C-0143-42AC-A486-1395A4C972AE}.Release|x86.Build.0 = Release|Win32
 		{D96B0ECC-60B7-44C9-9E0F-243F30CB091C}.Debug|x86.ActiveCfg = Release|Win32
 		{D96B0ECC-60B7-44C9-9E0F-243F30CB091C}.Debug|x86.Build.0 = Release|Win32
 		{D96B0ECC-60B7-44C9-9E0F-243F30CB091C}.Release|x86.ActiveCfg = Release|Win32
@@ -283,7 +248,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E745E25C-0143-42AC-A486-1395A4C972AE} = {E081873A-3420-4007-A9C3-A7919945C153}
 		{D96B0ECC-60B7-44C9-9E0F-243F30CB091C} = {01251884-230B-45EF-82FF-A3002DDA40E5}
 		{49647803-64C5-4742-BCB2-C8DC671B25EF} = {4A7E7A0E-D5B3-4ABB-B638-6C80B321E5DE}
 		{837A57D3-2A9F-4985-B2EA-E18558EEAA43} = {4A7E7A0E-D5B3-4ABB-B638-6C80B321E5DE}

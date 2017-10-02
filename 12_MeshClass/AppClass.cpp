@@ -1,4 +1,6 @@
 #include "AppClass.h"
+
+int meshSize = 48;
 void Application::InitVariables(void)
 {
 	////Change this to your name and email
@@ -8,12 +10,10 @@ void Application::InitVariables(void)
 	//m_pWindow->setPosition(sf::Vector2i(710, 0));
 
 	//Make MyMesh object
-	m_pMesh = new MyMesh();
-	m_pMesh->GenerateCube(2.0f, C_BROWN);
-
-	//Make MyMesh object
-	m_pMesh1 = new MyMesh();
-	m_pMesh1->GenerateCube(1.0f, C_WHITE);
+	m_pMesh = new MyMesh[meshSize];
+	for (int i = 0; i < meshSize; i++) {
+		m_pMesh[i].GenerateCube(1.0f, C_BLACK);
+	}
 }
 void Application::Update(void)
 {
@@ -31,8 +31,43 @@ void Application::Display(void)
 	// Clear the screen
 	ClearScreen();
 
-	m_pMesh->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), ToMatrix4(m_qArcBall));
-	m_pMesh1->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), glm::translate(vector3( 3.0f, 0.0f, 0.0f)));
+	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
+	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
+	static matrix4 m4Model;
+
+	for (int i = 0; i < meshSize; i++) {
+		if (i < 2) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3(i*6 + 2, 8, 0)));
+		}
+		else if (i < 4) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i-2) * 4 + 3, 7, 0)));
+		}
+		else if (i < 11) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 4) + 2, 6, 0)));
+		}
+		else if (i < 13) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 11) + 1, 5, 0)));
+		}
+		else if (i < 16) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 13) + 4, 5, 0)));
+		}
+		else if (i < 18) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 16) + 8, 5, 0)));
+		}
+		else if (i < 29) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 18), 4, 0)));
+		}
+		else if (i < 30) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 29), 3, 0)));
+		}
+		else if (i < 37) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 30) + 2, 3, 0)));
+		}
+		else if (i < 38) {
+			m_pMesh[i].Render(m4Projection, m4View, m4Model * glm::translate(IDENTITY_M4, vector3((i - 37) + 10, 3, 0)));
+		}
+		
+	}
 		
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
