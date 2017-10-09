@@ -2,7 +2,7 @@
 void Application::InitVariables(void)
 {
 	////Change this to your name and email
-	//m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	//m_sProgrammer = "Aria Myers - jsm3767@g.rit.edu";
 
 	////Alberto needed this at this position for software recording.
 	//m_pWindow->setPosition(sf::Vector2i(710, 0));
@@ -13,22 +13,17 @@ void Application::InitVariables(void)
 	m_pModel = new Simplex::Model();
 	m_pModel->Load("Sorted\\WallEye.bto");
 	
-	m_stopsList.push_back(vector3(-4.0f, -2.0f, 5.0f));
-	m_stopsList.push_back(vector3(1.0f, -2.0f, 5.0f));
-
-	m_stopsList.push_back(vector3(-3.0f, -1.0f, 3.0f));
-	m_stopsList.push_back(vector3(2.0f, -1.0f, 3.0f));
-
-	m_stopsList.push_back(vector3(-2.0f, 0.0f, 0.0f));
-	m_stopsList.push_back(vector3(3.0f, 0.0f, 0.0f));
-
-	m_stopsList.push_back(vector3(-1.0f, 1.0f, -3.0f));
-	m_stopsList.push_back(vector3(4.0f, 1.0f, -3.0f));
-
-	m_stopsList.push_back(vector3(0.0f, 2.0f, -5.0f));
-	m_stopsList.push_back(vector3(5.0f, 2.0f, -5.0f));
-
-	m_stopsList.push_back(vector3(1.0f, 3.0f, -5.0f));
+	m_stopsList.push_back(vector3(-4.0f, -2.0f, 5.0f)); //1
+	m_stopsList.push_back(vector3(1.0f, -2.0f, 5.0f)); //2
+	m_stopsList.push_back(vector3(-3.0f, -1.0f, 3.0f)); //3
+	m_stopsList.push_back(vector3(2.0f, -1.0f, 3.0f)); //4
+	m_stopsList.push_back(vector3(-2.0f, 0.0f, 0.0f)); //5
+	m_stopsList.push_back(vector3(3.0f, 0.0f, 0.0f)); //6
+	m_stopsList.push_back(vector3(-1.0f, 1.0f, -3.0f)); //7
+	m_stopsList.push_back(vector3(4.0f, 1.0f, -3.0f)); //8
+	m_stopsList.push_back(vector3(0.0f, 2.0f, -5.0f)); //9
+	m_stopsList.push_back(vector3(5.0f, 2.0f, -5.0f)); //10
+	m_stopsList.push_back(vector3(1.0f, 3.0f, -5.0f)); //11
 }
 void Application::Update(void)
 {
@@ -41,6 +36,8 @@ void Application::Update(void)
 	//Is the first person camera active?
 	CameraRotation();
 }
+
+
 void Application::Display(void)
 {
 	// Clear the screen
@@ -54,19 +51,24 @@ void Application::Display(void)
 	static uint uClock = m_pSystem->GenClock(); //generate a new clock for that timer
 	fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
 
+
 	//calculate the current position
 	vector3 v3CurrentPos;
-	
-
-
-
+	if (fTimer >= (11)) {
+		fTimer = 0;
+	}
+	int index = (int)(fTimer);
+	float transitionAmount = (fTimer) - index;
+	if (index == 10) {
+		v3CurrentPos = glm::lerp(m_stopsList[index], m_stopsList[0], transitionAmount);
+	} else {
+		v3CurrentPos = glm::lerp(m_stopsList[index], m_stopsList[index+1], transitionAmount);
+	}
 
 	//your code goes here
-	v3CurrentPos = vector3(0.0f, 0.0f, 0.0f);
+	//v3CurrentPos = vector3(0.0f, 0.0f, 0.0f);
 	//-------------------
 	
-
-
 	
 	matrix4 m4Model = glm::translate(v3CurrentPos);
 	m_pModel->SetModelMatrix(m4Model);
