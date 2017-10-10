@@ -261,6 +261,9 @@ void MyMesh::GenerateCuboid(vector3 a_v3Dimensions, vector3 a_v3Color)
 }
 void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
+	Release();
+	Init();
+
 	if (a_fRadius < 0.01f)
 		a_fRadius = 0.01f;
 
@@ -269,22 +272,40 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 
 	if (a_nSubdivisions < 3)
 		a_nSubdivisions = 3;
+
 	if (a_nSubdivisions > 360)
 		a_nSubdivisions = 360;
 
-	Release();
-	Init();
+	float halfHeight = a_fHeight * 0.5f;
+	float angleStep = 360.0f / a_nSubdivisions;
+	std::vector<vector3> points;
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
-	// -------------------------------
-
+	vector3 topPoint(0,halfHeight,0);
+	vector3 bottomPoint(0, -halfHeight, 0);
+	
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		points.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fRadius, -halfHeight, glm::cos(glm::radians(angleStep * i)) * a_fRadius));
+	}
+	
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		if (i == a_nSubdivisions - 1) {
+			AddTri(points[i], points[0], topPoint);
+			AddTri(points[0], points[i], bottomPoint);
+		}
+		else {
+			AddTri(points[i], points[i + 1], topPoint);
+			AddTri(points[i + 1], points[i], bottomPoint);
+		}
+	}
 	// Adding information about color
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
 }
 void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
+	Release();
+	Init();
+
 	if (a_fRadius < 0.01f)
 		a_fRadius = 0.01f;
 
@@ -296,12 +317,31 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	if (a_nSubdivisions > 360)
 		a_nSubdivisions = 360;
 
-	Release();
-	Init();
+	float halfHeight = a_fHeight * 0.5f;
+	float angleStep = 360.0f / a_nSubdivisions;
+	std::vector<vector3> topPoints;
+	std::vector<vector3> bottomPoints;
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
-	// -------------------------------
+	vector3 topPoint(0, halfHeight, 0);
+	vector3 bottomPoint(0, -halfHeight, 0);
+
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		topPoints.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fRadius, halfHeight, glm::cos(glm::radians(angleStep * i)) * a_fRadius));
+		bottomPoints.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fRadius, -halfHeight, glm::cos(glm::radians(angleStep * i)) * a_fRadius));
+	}
+
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		if (i == a_nSubdivisions - 1) {
+			AddTri(topPoints[i], topPoints[0], topPoint);
+			AddQuad(bottomPoints[i], bottomPoints[0], topPoints[i], topPoints[0]);
+			AddTri(bottomPoints[0], bottomPoints[i], bottomPoint);
+		}
+		else {
+			AddTri(topPoints[i], topPoints[i + 1], topPoint);
+			AddQuad(bottomPoints[i], bottomPoints[i + 1], topPoints[i], topPoints[i + 1]);
+			AddTri(bottomPoints[i + 1], bottomPoints[i], bottomPoint);
+		}
+	}
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -309,6 +349,9 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 }
 void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
+	Release();
+	Init();
+	
 	if (a_fOuterRadius < 0.01f)
 		a_fOuterRadius = 0.01f;
 
@@ -326,14 +369,42 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	if (a_nSubdivisions > 360)
 		a_nSubdivisions = 360;
 
-	Release();
-	Init();
+	float halfHeight = a_fHeight * 0.5f;
+	float angleStep = 360.0f / a_nSubdivisions;
+	std::vector<vector3> topOutterPoints;
+	std::vector<vector3> topInnerPoints;
+	std::vector<vector3> bottomOutterPoints;
+	std::vector<vector3> bottomInnerPoints;
 
-	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
-	// -------------------------------
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		topOutterPoints.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fOuterRadius, halfHeight, 
+			glm::cos(glm::radians(angleStep * i)) * a_fOuterRadius));
+		topInnerPoints.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fInnerRadius, halfHeight, 
+			glm::cos(glm::radians(angleStep * i)) * a_fInnerRadius));
+		bottomOutterPoints.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fOuterRadius, -halfHeight, 
+			glm::cos(glm::radians(angleStep * i)) * a_fOuterRadius));
+		bottomInnerPoints.push_back(vector3(glm::sin(glm::radians(angleStep * i)) * a_fInnerRadius, -halfHeight, 
+			glm::cos(glm::radians(angleStep * i)) * a_fInnerRadius));
+	}
 
-	// Adding information about color
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		if (i == a_nSubdivisions - 1) {
+			AddQuad(bottomOutterPoints[i], bottomOutterPoints[0], topOutterPoints[i], topOutterPoints[0]);
+			AddQuad(bottomInnerPoints[0], bottomInnerPoints[i], topInnerPoints[0], topInnerPoints[i]);
+
+			AddQuad(topOutterPoints[i], topOutterPoints[0], topInnerPoints[i], topInnerPoints[0]);
+			AddQuad(bottomInnerPoints[i], bottomInnerPoints[0], bottomOutterPoints[i], bottomOutterPoints[0]);
+		}
+		else {
+
+			AddQuad(bottomOutterPoints[i], bottomOutterPoints[i + 1], topOutterPoints[i], topOutterPoints[i + 1]);
+			AddQuad(bottomInnerPoints[i+1], bottomInnerPoints[i], topInnerPoints[i+1], topInnerPoints[i]);
+
+			AddQuad(topOutterPoints[i], topOutterPoints[i+1], topInnerPoints[i], topInnerPoints[i+1]);
+			AddQuad(bottomInnerPoints[i], bottomInnerPoints[i+1], bottomOutterPoints[i], bottomOutterPoints[i+1]);
+		}
+	}
+
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
 }
@@ -371,6 +442,9 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 }
 void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color)
 {
+	Release();
+	Init();
+
 	if (a_fRadius < 0.01f)
 		a_fRadius = 0.01f;
 
@@ -380,15 +454,54 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 		GenerateCube(a_fRadius * 2.0f, a_v3Color);
 		return;
 	}
-	if (a_nSubdivisions > 6)
-		a_nSubdivisions = 6;
 
-	Release();
-	Init();
+	vector3 topPoint(0, a_fRadius, 0);
+	vector3 bottomPoint(0, -a_fRadius, 0);
+	float angleStep = 360.0f / a_nSubdivisions;
+	float heightAngleStep = 180.0f / a_nSubdivisions;
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
-	// -------------------------------
+	std::vector<std::vector<vector3>> rings;
+	for (int i = 0; i < a_nSubdivisions-1; i++) {
+
+		//this loop will store the point values inside a 2d array
+		// basically the first level of the array if which ring we're dealing with
+		// the second accounts for each point on that ring around the circle
+
+		std::vector<vector3> ringPoints;
+		float ringRadius = a_fRadius * glm::sin(glm::radians(heightAngleStep * (i + 1) ));
+		float ringHeight = a_fRadius * glm::cos(glm::radians(heightAngleStep * (i + 1) ));
+
+		for (int j = 0; j < a_nSubdivisions; j++) {
+			ringPoints.push_back(vector3(glm::sin(glm::radians(angleStep * j)) * ringRadius, ringHeight, glm::cos(glm::radians(angleStep * j)) * ringRadius));
+		}
+
+		rings.push_back(ringPoints);
+	}
+	
+	//drawing the top and bottom has to be special since we're not dealing with rings
+	// basically the same as drawing a cone, but not quite
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		if (i == a_nSubdivisions - 1) {
+			AddTri(rings[0][i], rings[0][0], topPoint);
+			AddTri(rings[rings.size() - 1][0], rings[rings.size() - 1][i], bottomPoint);
+		}
+		else {
+			AddTri(rings[0][i], rings[0][i+1], topPoint);
+			AddTri(rings[rings.size() - 1][i+1], rings[rings.size() - 1][i], bottomPoint);
+		}
+	}
+	//now we'll draw the body of the sphere
+
+	for (int i = 0; i < rings.size() - 1; i++) {
+		for (int j = 0; j < a_nSubdivisions; j++) {
+			if (j == a_nSubdivisions - 1) {
+				AddQuad(rings[i+1][j], rings[i+1][0], rings[i][j], rings[i][0]);
+			}
+			else {
+				AddQuad(rings[i+1][j], rings[i + 1][j+1], rings[i][j], rings[i][j+1]);
+			}
+		}
+	}
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
