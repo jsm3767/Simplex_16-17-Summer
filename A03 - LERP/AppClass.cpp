@@ -2,7 +2,7 @@
 void Application::InitVariables(void)
 {
 	////Change this to your name and email
-	//m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	//m_sProgrammer = "Aria Myers - jsm3767@g.rit.edu";
 
 	////Alberto needed this at this position for software recording.
 	//m_pWindow->setPosition(sf::Vector2i(710, 0));
@@ -34,9 +34,21 @@ void Application::InitVariables(void)
 	/*
 		This part will create the orbits, it start at 3 because that is the minimum subdivisions a torus can have
 	*/
+
+	
+
 	uint uSides = 3; //start with the minimal 3 sides
 	for (uint i = uSides; i < m_uOrbits + uSides; i++)
 	{
+		float angleStep = (std::_Pi*2) / i;
+		std::vector<vector3> temp;
+		for (int j = 0; j < i; j++) {
+			temp.push_back(vector3(glm::cos(angleStep * j)*fSize, -glm::sin(angleStep*j)*fSize, 0));
+		}
+		orbitVertecies.push_back(temp);
+		pathProgress.push_back(0);
+		interpProgress.push_back(0);
+
 		vector3 v3Color = WaveLengthToRGB(uColor); //calculate color based on wavelength
 		m_shapeList.push_back(m_pMeshMngr->GenerateTorus(fSize, fSize - 0.1f, 3, i, v3Color)); //generate a custom torus and add it to the meshmanager
 		fSize += 0.5f; //increment the size for the next orbit
@@ -68,16 +80,37 @@ void Application::Display(void)
 	//m4Offset = glm::rotate(IDENTITY_M4, 90.0f, AXIS_Z);
 
 	// draw a shapes
+	int numSides = 3;
 	for (uint i = 0; i < m_uOrbits; ++i)
 	{
 		m_pMeshMngr->AddMeshToRenderList(m_shapeList[i], glm::rotate(m4Offset, 90.0f, AXIS_X));
-
 		//calculate the current position
 		vector3 v3CurrentPos = ZERO_V3;
+		vector3 firstPoint;
+		vector3 secondPoint;
+		if (pathProgress[i] == numSides -1) {
+			firstPoint = orbitVertecies[i][pathProgress[i]];
+			secondPoint = orbitVertecies[i][0];
+		}
+		else {
+			firstPoint = orbitVertecies[i][pathProgress[i]];
+			secondPoint = orbitVertecies[i][pathProgress[i]+1];
+		}
+		v3CurrentPos = glm::lerp(firstPoint, secondPoint, interpProgress[i]);
 		matrix4 m4Model = glm::translate(m4Offset, v3CurrentPos);
 
 		//draw spheres
-		m_pMeshMngr->AddSphereToRenderList(m4Model * glm::scale(vector3(0.1)), C_WHITE);
+		m_pMeshMngr->AddSphereToRenderList(m4Model * glm::scale(vector3(0.4)), C_WHITE);
+
+		if (interpProgress[i] >= 1) {
+			interpProgress[i] = 0;
+			pathProgress[i] += 1;
+			if (pathProgress[i] >= numSides) {
+				pathProgress[i] = 0;
+			}
+		}
+		interpProgress[i] += 0.01f;
+		numSides++;
 	}
 
 	//render list call

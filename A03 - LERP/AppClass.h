@@ -20,7 +20,10 @@ class Application
 {
 	uint m_uOrbits = 0; //number of shapes starting at 3 and increasing in sides
 	std::vector<uint> m_shapeList; //shape index for circles
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	std::vector<std::vector<vector3>> orbitVertecies;
+	std::vector<int> pathProgress;
+	std::vector<float> interpProgress;
+	String m_sProgrammer = "Aria Myers - jsm3767@rit.edu";
 	
 private:
 	static ImGuiObject gui; //GUI object
@@ -36,6 +39,8 @@ private:
 	vector3 m_v3Light; //position of light 1
 	vector4 m_v4ClearColor; //Color of the scene
 	bool m_bRunning = false; //Is app running?
+
+	
 
 	sf::Window* m_pWindow = nullptr; //SFML window
 	SystemSingleton* m_pSystem = nullptr; //Singleton of the system
