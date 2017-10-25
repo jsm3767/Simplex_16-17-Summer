@@ -51,6 +51,8 @@ void Application::Display(void)
 	m4Model = m4TransInverse * m4Rotation * m4Translation;
 	*/
 
+	m4Model = glm::toMat4(m_qOrientation);
+
 	// render the object
 	m_pMesh->Render(m4Projection, m4View, m4Model);
 	
