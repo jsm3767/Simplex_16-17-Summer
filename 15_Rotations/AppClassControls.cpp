@@ -130,6 +130,9 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 			}
 		}
 		break;
+	case sf::Keyboard::R:
+		m_qOrientation = quaternion();
+		break;
 	}
 
 	//gui
@@ -414,6 +417,48 @@ void Application::ProcessKeyboard(void)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 		m_pCameraMngr->MoveVertical(fSpeed);
 #pragma endregion
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
+	{
+		//m_v3Orientation.x++;
+		if (fMultiplier) {
+			m_qOrientation = m_qOrientation * glm::angleAxis(-1.0f, AXIS_X);
+		}
+		else {
+			m_qOrientation = m_qOrientation * glm::angleAxis(-1.0f, AXIS_X);
+		}
+		//example on how even a quaternion if generated though Euler will have Gimbal Lock
+		//vector3 v3Temp(glm::radians(m_v3Orientation.x), glm::radians(m_v3Orientation.y), glm::radians(m_v3Orientation.z));
+		//m_qOrientation = quaternion(vector3(v3Temp));
+
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
+	{
+		//m_v3Orientation.y++;
+		if (fMultiplier) {
+			m_qOrientation = m_qOrientation * glm::angleAxis(-1.0f, AXIS_Y);
+		}
+		else {
+			m_qOrientation = m_qOrientation * glm::angleAxis(1.0f, AXIS_Y);
+		}
+		//example on how even a quaternion if generated though Euler will have Gimbal Lock
+		//vector3 v3Temp(glm::radians(m_v3Orientation.x), glm::radians(m_v3Orientation.y), glm::radians(m_v3Orientation.z));
+		//m_qOrientation = quaternion(vector3(v3Temp));
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+		//m_v3Orientation.z++;
+		if (fMultiplier) {
+			m_qOrientation = m_qOrientation * glm::angleAxis(-1.0f, AXIS_Z);
+		}
+		else {
+			m_qOrientation = m_qOrientation * glm::angleAxis(1.0f, AXIS_Z);
+		}
+		//example on how even a quaternion if generated though Euler will have Gimbal Lock
+		//vector3 v3Temp(glm::radians(m_v3Orientation.x), glm::radians(m_v3Orientation.y), glm::radians(m_v3Orientation.z));
+		//m_qOrientation = quaternion(vector3(v3Temp));
+	}
 }
 //Joystick
 void Application::ProcessJoystick(void)
