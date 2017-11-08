@@ -282,7 +282,7 @@ void Application::ArcBall(float a_fSensitivity)
 {
 	//If the arcball is not enabled return
 	if (!m_bArcBall)
-		return;
+		return ;
 
 	//static quaternion qArcBall;
 	UINT	MouseX, MouseY;		// Coordinates for the mouse
@@ -323,7 +323,7 @@ void Application::ArcBall(float a_fSensitivity)
 	}
 
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
-								   //return qArcBall; // return the new quaternion orientation
+	return; // return the new quaternion orientation
 }
 void Application::CameraRotation(float a_fSpeed)
 {
@@ -369,6 +369,22 @@ void Application::CameraRotation(float a_fSpeed)
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
 	//Change the Yaw and the Pitch of the camera
+	// we'll want to rotate along axis relative to the camera to avoid some spasms at the top and bottom.
+	// however this is not how most games handle that, because it is unintuitive
+	// most games will simply lock the up and down angle the player can look, but continue to rotate the camera along the global y axis instead of the cameras local y axis
+	// so in this case I opted to make all of the rotations relavent to the camera, partly to avoid a gimbal lock, and partly to proe that all of my axis were updating properly.
+	// 
+	// the code below simply takes my unit forward vector, and rotates it twice based on the mouse movement
+	// the same happens to the up vector though technically that only needs one rotation, since it always rotates around itself.
+	// (I'm a little scared it will break if I change it so I'll leave it in)
+	vector3 newForward = glm::rotate(m_pCamera->GetForward(), fAngleY, m_pCamera->GetUp());
+	newForward = glm::rotate(newForward, fAngleX, m_pCamera->GetRight());
+	vector3 newUp = glm::rotate(m_pCamera->GetUp(), fAngleY, m_pCamera->GetUp());
+	newUp = glm::rotate(newUp, fAngleX, m_pCamera->GetRight());
+
+	//now we simply update our new target and up vector
+	m_pCamera->SetPositionTargetAndUp(m_pCamera->GetPosition(), m_pCamera->GetPosition() + glm::normalize(newForward), glm::normalize(newUp));
+
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
 //Keyboard
@@ -385,6 +401,31 @@ void Application::ProcessKeyboard(void)
 
 	if (fMultiplier)
 		fSpeed *= 5.0f;
+
+	float fAngleZ = 0.0f; //we'l' need this for roll rotation
+
+	// these four if statements will move the camera's position along one of the camera's axis
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) 
+		m_pCamera->SetPosition(m_pCamera->GetPosition() + m_pCamera->GetForward() * fSpeed);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		m_pCamera->SetPosition(m_pCamera->GetPosition() + m_pCamera->GetForward() * -fSpeed);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		m_pCamera->SetPosition(m_pCamera->GetPosition() + m_pCamera->GetRight() * fSpeed);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		m_pCamera->SetPosition(m_pCamera->GetPosition() + m_pCamera->GetRight() * -fSpeed);
+
+	//here I set the angle if the player wants to roll the camera
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		fAngleZ = -fSpeed * 4;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+		fAngleZ = fSpeed * 4;
+
+	//since roll doesn't affect our target we simply need to rotate our up vector based on the roll angle
+	vector3 newUp = glm::rotate(m_pCamera->GetUp(), fAngleZ, m_pCamera->GetForward());
+	
+
+	//now we just set our target and up (our position is already set)
+	m_pCamera->SetPositionTargetAndUp(m_pCamera->GetPosition(), m_pCamera->GetPosition() + m_pCamera->GetForward(), newUp);
 #pragma endregion
 }
 //Joystick

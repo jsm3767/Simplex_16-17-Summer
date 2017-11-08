@@ -15,6 +15,8 @@ class MyCamera
 	vector3 m_v3Position = vector3(0.0f, 0.0f, 10.0f); //Where my camera is located
 	vector3 m_v3Target = vector3(0.0f, 0.0f, 0.0f); //What I'm looking at
 	vector3 m_v3Up = vector3(0.0f, 1.0f, 0.0f); //What is up
+	vector3 m_v3Forward = glm::normalize(m_v3Target - m_v3Position); //what is the direction I'm facing
+	vector3 m_v3Right = glm::rotate(m_v3Forward, 90.0f, m_v3Up);; //what is the direction to my right
 
 	bool m_bPerspective = true; //perspective view? False is Orthographic
 
@@ -101,6 +103,20 @@ public:
 	OUTPUT: position of the camera
 	*/
 	vector3 GetPosition(void);
+
+	/*
+	USAGE: Gets the forward facing vector of the camera
+	ARGUMENTS: ---
+	OUTPUT: vec3 of the camera's forward
+	*/
+	vector3 GetForward();
+
+	/*
+	USAGE: Gets the right facing vector of the camera
+	ARGUMENTS: ---
+	OUTPUT: vec3 of the camera's right vector
+	*/
+	vector3 GetRight();
 
 	/*
 	USAGE: Sets the position of the camera

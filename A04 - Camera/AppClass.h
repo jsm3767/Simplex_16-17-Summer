@@ -178,7 +178,7 @@ private:
 	ARGUMENTS: float a_fSpeed = 0.005f
 	OUTPUT: ---
 	*/
-	void CameraRotation(float a_fSpeed = 0.005f);
+	void CameraRotation(float a_fSpeed = 0.010f); // I simply tweaked this up a little cuz it felt low
 #pragma endregion
 
 #pragma region Process Events

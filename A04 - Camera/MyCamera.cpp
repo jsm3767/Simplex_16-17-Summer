@@ -3,10 +3,30 @@ using namespace Simplex;
 
 //Accessors
 void Simplex::MyCamera::SetPosition(vector3 a_v3Position) { m_v3Position = a_v3Position; }
+vector3 Simplex::MyCamera::GetPosition() { 
+	return m_v3Position; // straightforward helper method
+}
 
-void Simplex::MyCamera::SetTarget(vector3 a_v3Target) { m_v3Target = a_v3Target; }
+vector3 Simplex::MyCamera::GetForward()
+{
+	return m_v3Forward; // straightforward helper method
+}
+
+vector3 Simplex::MyCamera::GetRight() {
+	m_v3Right = glm::rotate(m_v3Forward,  90.0f , m_v3Up); // this only needs to be update when someone is asking for it
+	return m_v3Right;
+}
+
+void Simplex::MyCamera::SetTarget(vector3 a_v3Target) {
+	m_v3Target = a_v3Target;
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position); // whenever someone sets our target we should update the forward vector
+} 
 
 void Simplex::MyCamera::SetUp(vector3 a_v3Up) { m_v3Up = a_v3Up; }
+
+vector3 Simplex::MyCamera::GetUp() {
+	return m_v3Up; //added this to provide access to the up vector
+}
 
 void Simplex::MyCamera::SetPerspective(bool a_bPerspective) { m_bPerspective = a_bPerspective; }
 
@@ -128,8 +148,8 @@ void Simplex::MyCamera::ResetCamera(void)
 void Simplex::MyCamera::SetPositionTargetAndUp(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward)
 {
 	m_v3Position = a_v3Position;
-	m_v3Target = a_v3Target;
-	m_v3Up = a_v3Position + a_v3Upward;
+	this->SetTarget(a_v3Target);
+	m_v3Up = a_v3Upward; // this up vector was referencing the camera's position but that was a mistake.  Now it's fixed
 	CalculateProjectionMatrix();
 }
 
