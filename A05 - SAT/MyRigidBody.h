@@ -247,6 +247,11 @@ private:
 	OUTPUT: 0 for colliding, other = first axis that succeeds test
 	*/
 	uint SAT(MyRigidBody* const a_pOther);
+
+	/*
+	USAGE: sets the values of the aMin, aMax variables to the min and max values of the corners projected on the axis
+	*/
+	void GetMinMaxProjection(glm::vec3 corners[], vector3 axis, float& min, float& max);
 };//class
 
 } //namespace Simplex

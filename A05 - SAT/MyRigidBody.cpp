@@ -232,7 +232,8 @@ bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 	//if they are colliding check the SAT
 	if (bColliding)
 	{
-		if(SAT(a_pOther) != eSATResults::SAT_NONE)
+		int satResult = SAT(a_pOther);
+		if(satResult != eSATResults::SAT_NONE)
 			bColliding = false;// reset to false
 	}
 
@@ -276,17 +277,117 @@ void MyRigidBody::AddToRenderList(void)
 
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
-	/*
-	Your code goes here instead of this comment;
+	
+	glm::vec3 v3MyCorner[8];
+	// I need all 8 corners of both boxes so I can calculate their x y and z axis each
+	v3MyCorner[0] = glm::vec3(m_v3MinL.x, m_v3MinL.y, m_v3MinL.z);
+	v3MyCorner[1] = glm::vec3(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z);
+	v3MyCorner[2] = glm::vec3(m_v3MinL.x, m_v3MaxL.y, m_v3MinL.z);
+	v3MyCorner[3] = glm::vec3(m_v3MaxL.x, m_v3MaxL.y, m_v3MinL.z);
 
-	For this method, if there is an axis that separates the two objects
-	then the return will be different than 0; 1 for any separating axis
-	is ok if you are not going for the extra credit, if you could not
-	find a separating axis you need to return 0, there is an enum in
-	Simplex that might help you [eSATResults] feel free to use it.
-	(eSATResults::SAT_NONE has a value of 0)
-	*/
+	v3MyCorner[4] = glm::vec3(m_v3MinL.x, m_v3MinL.y, m_v3MaxL.z);
+	v3MyCorner[5] = glm::vec3(m_v3MaxL.x, m_v3MinL.y, m_v3MaxL.z);
+	v3MyCorner[6] = glm::vec3(m_v3MinL.x, m_v3MaxL.y, m_v3MaxL.z);
+	v3MyCorner[7] = glm::vec3(m_v3MaxL.x, m_v3MaxL.y, m_v3MaxL.z);
 
-	//there is no axis test that separates this two objects
+	glm::vec3 v3OtherCorner[8];
+	v3OtherCorner[0] = glm::vec3(a_pOther->m_v3MinL.x, a_pOther->m_v3MinL.y, a_pOther->m_v3MinL.z);
+	v3OtherCorner[1] = glm::vec3(a_pOther->m_v3MaxL.x, a_pOther->m_v3MinL.y, a_pOther->m_v3MinL.z);
+	v3OtherCorner[2] = glm::vec3(a_pOther->m_v3MinL.x, a_pOther->m_v3MaxL.y, a_pOther->m_v3MinL.z);
+	v3OtherCorner[3] = glm::vec3(a_pOther->m_v3MaxL.x, a_pOther->m_v3MaxL.y, a_pOther->m_v3MinL.z);
+
+	v3OtherCorner[4] = glm::vec3(a_pOther->m_v3MinL.x, a_pOther->m_v3MinL.y, a_pOther->m_v3MaxL.z);
+	v3OtherCorner[5] = glm::vec3(a_pOther->m_v3MaxL.x, a_pOther->m_v3MinL.y, a_pOther->m_v3MaxL.z);
+	v3OtherCorner[6] = glm::vec3(a_pOther->m_v3MinL.x, a_pOther->m_v3MaxL.y, a_pOther->m_v3MaxL.z);
+	v3OtherCorner[7] = glm::vec3(a_pOther->m_v3MaxL.x, a_pOther->m_v3MaxL.y, a_pOther->m_v3MaxL.z);
+
+	for (int i = 0; i < 8; i++) {
+		v3MyCorner[i] = vector3(m_m4ToWorld * vector4(v3MyCorner[i], 1.0f));
+		v3OtherCorner[i] = vector3(a_pOther->m_m4ToWorld * vector4(v3OtherCorner[i], 1.0f));
+	}
+
+	glm::vec3 myXYZ[3];
+	myXYZ[0] = glm::normalize(v3MyCorner[1] - v3MyCorner[0]); // my x axis | ax
+	myXYZ[1] = glm::normalize(v3MyCorner[2] - v3MyCorner[0]); // my y axis | ay
+	myXYZ[2] = glm::normalize(v3MyCorner[4] - v3MyCorner[0]); // my z axis | az
+
+	// now I have all 8 corners of each, and I have all 15 axis to project onto (however we'll start with these axis so we dont have to do cross if we can find a seperating axis first)
+	// I simply need to loop through each axis and:
+	//		loop through each corner projecting each onto the axis
+	//	find the min and max, and compare those to the min and max of the other box
+	//	if either max < the other's min then there is a collision and we break
+
+	for (int axis = 0; axis < myXYZ->length(); axis++) {
+		float aMinProjection, aMaxProjection, bMinProjection, bMaxProjection;
+
+		GetMinMaxProjection(v3MyCorner, myXYZ[axis], aMinProjection, aMaxProjection);
+		GetMinMaxProjection(v3OtherCorner, myXYZ[axis], bMinProjection, bMaxProjection);
+
+		// if one min is greater than the other's max that's not a collision
+		if (aMinProjection > bMaxProjection || bMinProjection > aMaxProjection)
+			return (axis + 1); // this should return the proper axis that seperated the two
+	}
+
+	glm::vec3 otherXYZ[3];
+	otherXYZ[0] = glm::normalize(v3OtherCorner[1] - v3OtherCorner[0]); // other x axis | bx
+	otherXYZ[1] = glm::normalize(v3OtherCorner[2] - v3OtherCorner[0]); // other y axis | by
+	otherXYZ[2] = glm::normalize(v3OtherCorner[4] - v3OtherCorner[0]); // other z axis | bz
+
+	for (int axis = 0; axis < otherXYZ->length(); axis++) {
+		float aMinProjection, aMaxProjection, bMinProjection, bMaxProjection;
+
+		GetMinMaxProjection(v3MyCorner, otherXYZ[axis], aMinProjection, aMaxProjection);
+		GetMinMaxProjection(v3OtherCorner, otherXYZ[axis], bMinProjection, bMaxProjection);
+
+		// if one min is greater than the other's max that's not a collision
+		if (aMinProjection > bMaxProjection || bMinProjection > aMaxProjection)
+			return (axis + 4); // this should return the proper axis that seperated the two
+	}
+
+	glm::vec3 crosses[9];
+	crosses[0] = glm::normalize(glm::cross(myXYZ[0], otherXYZ[3] + FLT_EPSILON)); // cross of each x | ax x bx
+	crosses[1] = glm::normalize(glm::cross(myXYZ[0], otherXYZ[4] + FLT_EPSILON)); //  ax x by
+	crosses[2] = glm::normalize(glm::cross(myXYZ[0], otherXYZ[5] + FLT_EPSILON)); //  ax x bz
+
+	crosses[3] = glm::normalize(glm::cross(myXYZ[1], otherXYZ[3] + FLT_EPSILON)); //  ay x bx
+	crosses[4] = glm::normalize(glm::cross(myXYZ[1], otherXYZ[4] + FLT_EPSILON)); //  ay x by
+	crosses[5] = glm::normalize(glm::cross(myXYZ[1], otherXYZ[5] + FLT_EPSILON)); //  ay x bz
+
+	crosses[6] = glm::normalize(glm::cross(myXYZ[2], otherXYZ[3] + FLT_EPSILON)); //  az x bx
+	crosses[7] = glm::normalize(glm::cross(myXYZ[2], otherXYZ[4] + FLT_EPSILON)); //  az x by
+	crosses[8] = glm::normalize(glm::cross(myXYZ[2], otherXYZ[5] + FLT_EPSILON)); //  az x bz
+
+	for (int axis = 0; axis < crosses->length(); axis++) {
+		float aMinProjection, aMaxProjection, bMinProjection, bMaxProjection;
+
+		GetMinMaxProjection(v3MyCorner, crosses[axis], aMinProjection, aMaxProjection);
+		GetMinMaxProjection(v3OtherCorner, crosses[axis], bMinProjection, bMaxProjection);
+
+		// if one min is greater than the other's max that's not a collision
+		if (aMinProjection > bMaxProjection || bMinProjection > aMaxProjection)
+			return (axis + 7); // this should return the proper axis that seperated the two
+	}
+
+	//there is no axis test that separates these two objects
 	return eSATResults::SAT_NONE;
 }
+
+void Simplex::MyRigidBody::GetMinMaxProjection(glm::vec3 corners[], vector3 axis, float & min, float & max)
+{
+	// here we set the first of the projections to min, and we'll update min and max as we loop through each corner of the box
+	min = glm::dot(corners[0], axis);
+	max = min;
+
+	for (int i = 1; i < 8; i++) { // we can skip zero since it's our base
+		float proj = glm::dot(corners[i], axis); // lets see where this corner lies on the axis
+		if (proj < min) {
+			min = proj;
+		}
+		if (proj > max) {
+			max = proj;
+		}
+	}
+
+	// this should give us the min and max values of every projection, and put them on the pointers we took in
+}
+
