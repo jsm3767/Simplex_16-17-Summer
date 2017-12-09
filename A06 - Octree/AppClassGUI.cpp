@@ -292,6 +292,9 @@ void Application::NewFrame()
 	// Start the frame
 	ImGui::NewFrame();
 }
+
+
+
 void Application::InitIMGUI(void)
 {
 	ImGuiIO& io = ImGui::GetIO();

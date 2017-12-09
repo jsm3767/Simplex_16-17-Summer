@@ -412,6 +412,25 @@ void Application::ProcessKeyboard(void)
 	for discreet on/off use ProcessKeyboardPressed/Released
 	*/
 #pragma region Camera Position
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+		drawTree = false;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::O))
+		drawTree = true;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RBracket)) {
+		numLevels++;
+		m_uOctantLevels = numLevels;
+		RecreateTree();
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LBracket)) {
+		if (numLevels >= 1) {
+			numLevels--;
+			m_uOctantLevels = numLevels;
+			RecreateTree();
+		}
+	}
+
+
 	bool bMultiplier = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 

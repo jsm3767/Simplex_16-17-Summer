@@ -191,7 +191,6 @@ public:
 	OUTPUT: ---
 	*/
 	void AssignIDtoEntity(void);
-
 	/*
 	USAGE: Gets the total number of octants in the world
 	ARGUMENTS: ---

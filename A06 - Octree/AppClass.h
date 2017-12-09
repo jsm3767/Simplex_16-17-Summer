@@ -11,6 +11,8 @@ Date: 2017/06
 #include "imgui\ImGuiObject.h"
 
 #include "MyEntityManager.h"
+#include "Simplex/Physics/Octant.h"
+#include "OctTree.h"
 
 namespace Simplex
 {
@@ -59,6 +61,9 @@ private:
 	sf::Sound m_sound; //sound effect
 	sf::Music m_soundBGM; //background music
 
+	OctTree* tree = nullptr;
+	bool drawTree = false;
+	int numLevels = 0;
 public:
 #pragma region Constructor / Run / Destructor
 	/*
@@ -312,6 +317,10 @@ private:
 	*/
 	void NewFrame(void);
 #pragma endregion
+
+	void DistributeEntity(OctTree* currTree);
+	void RecreateTree();
+	void CheckCollisions(OctTree* currTree);
 
 #pragma region The Rule of Three
 	/*

@@ -11,7 +11,7 @@ void Application::InitVariables(void)
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
 #ifdef DEBUG
-	uint uInstances = 900;
+	uint uInstances = 300; // decreased number in order to deal with laptop speed
 #else
 	uint uInstances = 1849;
 #endif
@@ -30,8 +30,55 @@ void Application::InitVariables(void)
 		}
 	}
 	m_uOctantLevels = 1;
+
+	tree = new OctTree(vector3(0, 0, 0), 68);
+	DistributeEntity(tree);
+
 	m_pEntityMngr->Update();
 }
+
+void Simplex::Application::DistributeEntity(OctTree * currTree)
+{
+	if (currTree->HasChildren()) {
+		for (int i = 0; i < 8; i++) {
+			DistributeEntity(currTree->GetChild(i));
+		}
+	}
+	else {
+		for (int i = 0; i < m_pEntityMngr->GetEntityCount(); i++) {
+			if (currTree->IsColliding(i)) {
+				currTree->AddEntityToList(i);
+			}
+		}
+	}
+}
+
+void Simplex::Application::RecreateTree()
+{
+	tree = new OctTree(vector3(0, 0, 0), 68);
+	tree->ConstructTree(numLevels);
+	DistributeEntity(tree);
+}
+
+void Simplex::Application::CheckCollisions(OctTree* currTree) {
+	if (currTree->HasChildren()) {
+		for (int i = 0; i < 8; i++) {
+			CheckCollisions(currTree->GetChild(i));
+		}
+	}
+	else {
+		std::vector<uint> entities = currTree->GetEntityList();
+		if (entities.size() <= 0) {
+			return;
+		}
+		for (int i = 0; i < entities.size() - 1; i++) {
+			for (int j = i + 1; j < entities.size(); j++) {
+				m_pEntityMngr->GetEntity(entities[i])->IsColliding(m_pEntityMngr->GetEntity(entities[j]));
+			}
+		}
+	}
+}
+
 void Application::Update(void)
 {
 	//Update the system so it knows how much time has passed since the last call
@@ -46,6 +93,14 @@ void Application::Update(void)
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 
+	// I sear I would not be doing this if I did not get the ridiculous set of errors that I did.
+	// This is where I will be checking for collision, using the OctTree I created
+	// For Some Reason I Was unable to make an OctTree in the Entity Manager class
+	CheckCollisions(tree);
+	
+
+	if (drawTree)
+		tree->Display(C_YELLOW);
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
 }
